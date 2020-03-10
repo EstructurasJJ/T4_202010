@@ -2,27 +2,23 @@ package controller;
 
 import java.util.Scanner;
 
+import model.logic.Comparendo;
 import model.logic.Modelo;
 import view.View;
 
 public class Controller {
 
-	/* Instancia del Modelo*/
 	private Modelo modelo;
-	
-	/* Instancia de la Vista*/
 	private View view;
-	
-	/**
-	 * Crear la vista y el modelo del proyecto
-	 * @param capacidad tamaNo inicial del arreglo
-	 */
+	public final static String RUTAGEOJASON = "./data/Comparendos_DEI_2018_Bogotá_D.C.geojson";
+	public final static String JUEGUEMOS = "./data/Comparendos_DEI_2018_Bogotá_D.C_small.geojson";
+
 	public Controller ()
 	{
 		view = new View();
 		modelo = new Modelo();
 	}
-		
+
 	public void run() 
 	{
 		Scanner lector = new Scanner(System.in);
@@ -30,72 +26,57 @@ public class Controller {
 		String dato = "";
 		String respuesta = "";
 
-		while( !fin ){
+		Comparendo[] arreglo = null;
+
+		while( !fin )
+		{
 			view.printMenu();
 
 			int option = lector.nextInt();
-			switch(option){
-				case 1:
-					view.printMessage("--------- \nCrear Arreglo \nDar capacidad inicial del arreglo: ");
-				    int capacidad = lector.nextInt();
-				    modelo = new Modelo(capacidad); 
-				    view.printMessage("Arreglo Dinamico creado");
-				    view.printMessage("Numero actual de elementos " + modelo.darTamano() + "\n---------");						
-					break;
+			switch(option)
+			{
+			case 1:
 
-				case 2:
-					view.printMessage("--------- \nDar cadena (simple) a ingresar: ");
-					dato = lector.next();
-					modelo.agregar(dato);
-					view.printMessage("Dato agregado");
-					view.printMessage("Numero actual de elementos " + modelo.darTamano() + "\n---------");						
-					break;
+				//Cargar el archivo
 
-				case 3:
-					view.printMessage("--------- \nDar cadena (simple) a buscar: ");
-					dato = lector.next();
-					respuesta = modelo.buscar(dato);
-					if ( respuesta != null)
-					{
-						view.printMessage("Dato encontrado: "+ respuesta);
-					}
-					else
-					{
-						view.printMessage("Dato NO encontrado");
-					}
-					view.printMessage("Numero actual de elementos " + modelo.darTamano() + "\n---------");						
-					break;
+				modelo.leerGeoJson(JUEGUEMOS);
 
-				case 4:
-					view.printMessage("--------- \nDar cadena (simple) a eliminar: ");
-					dato = lector.next();
-					respuesta = modelo.eliminar(dato);
-					if ( respuesta != null)
-					{
-						view.printMessage("Dato eliminado "+ respuesta);
-					}
-					else
-					{
-						view.printMessage("Dato NO eliminado");							
-					}
-					view.printMessage("Numero actual de elementos " + modelo.darTamano() + "\n---------");						
-					break;
+				view.printMessage("Archivo GeoJSon Cargado");
+				view.printMessage("Numero actual de comparendos " + modelo.darTamanio() + "\n----------");
 
-				case 5: 
-					view.printMessage("--------- \nContenido del Arreglo: ");
-					view.printModelo(modelo);
-					view.printMessage("Numero actual de elementos " + modelo.darTamano() + "\n---------");						
-					break;	
-					
-				case 6: 
-					view.printMessage("--------- \n Hasta pronto !! \n---------"); 
-					lector.close();
-					fin = true;
-					break;	
+				//Primer Comparendo
 
-				default: 
-					view.printMessage("--------- \n Opcion Invalida !! \n---------");
-					break;
+				view.printMessage("La información del primer Object Id es: ");
+				view.printMessage("Object Id: " + modelo.darPrimerComparendo().darObjectid());
+				view.printMessage("Fecha Hora: " + modelo.darPrimerComparendo().darFecha_Hora().toString());
+				view.printMessage("Infracción: " + modelo.darPrimerComparendo().darInfraccion());
+				view.printMessage("Clase Vehiculo: " + modelo.darPrimerComparendo().darClase_Vehi());
+				view.printMessage("Tipo Servicio: " + modelo.darPrimerComparendo().darTipo_Servicio());
+				view.printMessage("Localidad: " + modelo.darPrimerComparendo().darLocalidad());
+				view.printMessage("Municipio: " + modelo.darPrimerComparendo().darMunicipio() + "\n----------");
+
+				//Último Comparendo
+
+				view.printMessage("La información del último Object Id es: ");
+				view.printMessage("Object Id: " + modelo.darUltimoComparendo().darObjectid());
+				view.printMessage("Fecha Hora: " + modelo.darUltimoComparendo().darFecha_Hora().toString());
+				view.printMessage("Infracción: " + modelo.darUltimoComparendo().darInfraccion());
+				view.printMessage("Clase Vehiculo: " + modelo.darUltimoComparendo().darClase_Vehi());
+				view.printMessage("Tipo Servicio: " + modelo.darUltimoComparendo().darTipo_Servicio());
+				view.printMessage("Localidad: " + modelo.darUltimoComparendo().darLocalidad());
+				view.printMessage("Municipio: " + modelo.darUltimoComparendo().darMunicipio() + "\n----------");
+				
+			break;
+
+			case 5:
+				view.printMessage("--------- \n Hasta pronto !! \n---------"); 
+				lector.close();
+				fin = true;
+				break;	
+
+			default: 
+				view.printMessage("--------- \n Opción Invalida !! \n---------");
+				break;
 			}
 		}
 		
