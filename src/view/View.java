@@ -15,12 +15,13 @@ public class View
 		public void printMenu()
 		{
 			System.out.println("1. Cargar datos.");
+			System.out.println("2. Mostrar N comparendos con base a una lista de clase de vehiculos.");
 			System.out.println("5. Exit");
 			System.out.println("Dar el numero de opcion a resolver, luego oprimir tecla Return: (e.g., 1):");
 		}
 
-		public void printMessage(String mensaje) {
-
+		public void printMessage(String mensaje) 
+		{
 			System.out.println(mensaje);
 		}		
 		

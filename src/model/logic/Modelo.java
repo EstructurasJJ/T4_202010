@@ -15,6 +15,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSyntaxException;
 
+import model.data_structures.ListaEnlazadaQueue;
 import model.data_structures.MaxHeapCP;
 import model.data_structures.Node;
 
@@ -31,12 +32,13 @@ public class Modelo
 	private double maxLongitud = -1000000000;
 	
 	private MaxHeapCP<Comparendo> datosHeap;
-	//JUANJO AÑADA ACÁ SU ESTRUCTURA
+	private ListaEnlazadaQueue<Comparendo> booty = new ListaEnlazadaQueue<Comparendo>();
 	
 	public Modelo()
 	{
 		parteDelComparendo = "";
 		datosHeap = new MaxHeapCP<Comparendo>();
+		booty = new ListaEnlazadaQueue<Comparendo>();
 	}
 	
 	
@@ -47,17 +49,17 @@ public class Modelo
 	
 	public int darTamanio()
 	{
-		return datosHeap.darTamaño();
+		return booty.darTamanio();
 	}
 	
-	public Comparendo darPrimerComparendo()
+	public Comparendo PrimerComparendo()
 	{
-		return datosHeap.darHeap()[1];
+		return booty.darPrimerElemento().darInfoDelComparendo();
 	}
 	
-	public Comparendo darUltimoComparendo()
+	public Comparendo UltimoComparendo()
 	{
-		return datosHeap.darHeap()[datosHeap.darTamaño()];
+		return booty.darUltimoElemento().darInfoDelComparendo();
 	}
 
 	public double darMinLatitud()
@@ -292,7 +294,7 @@ public class Modelo
 			coordenadas = false;
 			parteDelComparendo = "";
 			
-			datosHeap.añadir(compaAgregar);
+			booty.enqueue(compaAgregar);
 			compaAgregar = null;
 			
 			//System.out.println("///AGREGADO///");
@@ -303,20 +305,67 @@ public class Modelo
 	
 	//TODO TALLER 4 NUEVO
 	
+	public Comparendo[] copiarComparendos()
+	{
+		Comparendo[] comparendosCopia = new Comparendo[booty.darTamanio()+1];
+		int contador = 1;
+
+		Node<Comparendo> actual = booty.darPrimerElemento();
+
+		while(actual != null)
+		{
+			Comparendo compi = actual.darInfoDelComparendo();
+			comparendosCopia[contador] = compi;
+
+			contador++;
+			actual = actual.darSiguiente();
+
+		}
+
+		return comparendosCopia;
+	}
+	
 	public MaxHeapCP<Comparendo> generarMuestraHeap(int N)
 	{
 		MaxHeapCP<Comparendo> heapProv = new MaxHeapCP<Comparendo>();
 		
-		Comparable[] arr = datosHeap.darHeap();
+		Comparable[] arr = copiarComparendos();
 		
 		for(int i=1; i<=N; i++)
 		{
-			int random = (int) (datosHeap.darTamaño() * Math.random());
-			heapProv.añadir((Comparendo) arr[random]);
+			int random = (int) Math.floor((booty.darTamanio() * Math.random()));
+			heapProv.añadir((Comparendo) arr[random+1]);
 		}
+		
 		return heapProv;
 	}
 	
-	
+	public MaxHeapCP<Comparendo> norteMaxHeapCP(int N, String[] listica)
+	{
+		MaxHeapCP<Comparendo> heapProv = new MaxHeapCP<Comparendo>();
+		
+		long tiempoComienzo=System.currentTimeMillis();
+		MaxHeapCP<Comparendo> heapAleat = generarMuestraHeap(N);
+		long tiempo= System.currentTimeMillis()-tiempoComienzo;
+		System.out.println("El tiempo en generar la muestra aleatoria fue: " + tiempo + " milisegundos." + "\n----------");
+		
+		int cantidad = listica.length;
+		
+		Comparable[] arr = heapAleat.darHeap();
+		
+		for(int i = 0; i <= cantidad-1; i++)
+		{
+			for(int j = 1; j <= heapAleat.darTamaño(); j++)
+			{
+				if (((Comparendo) arr[j]).darClase_Vehi().equals(listica[i]))
+				{
+					Comparendo compi = (Comparendo) arr[j];
+					heapProv.añadir(compi);
+				}
+			}
+		}
+		
+		return heapProv;
+	}
 	
 }

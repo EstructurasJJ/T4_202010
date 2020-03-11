@@ -13,7 +13,7 @@ public class MaxHeapCP <T extends Comparable<T>>
 	public MaxHeapCP()
 	{
 		tamañoHeap = 0;
-		arregloHeap = (T[]) new Comparable[30];
+		arregloHeap = (T[]) new Comparable[3];
 	}
 	
 	
@@ -21,7 +21,7 @@ public class MaxHeapCP <T extends Comparable<T>>
 	
 	public int darTamaño()
 	{
-		return arregloHeap.length;
+		return tamañoHeap;
 	}
 	
 	public T[] darHeap()
@@ -35,7 +35,7 @@ public class MaxHeapCP <T extends Comparable<T>>
 	{
 		if(arregloHeap.length-1 == tamañoHeap)
 		{
-			T[] prov = (T[]) new Comparable[tamañoHeap*2+1];
+			T[] prov = (T[]) new Comparable[tamañoHeap+10];
 			
 			for(int i=1; i < arregloHeap.length; i++)
 			{
@@ -105,13 +105,15 @@ public class MaxHeapCP <T extends Comparable<T>>
 	
 	//Eliminar Máx
 	
-	public T devolverMax (T elem)
+	public T devolverMax ()
 	{
 		T max = arregloHeap[1];
 		exchange(1, tamañoHeap--);
 		
 		sink(1);
 		arregloHeap[++tamañoHeap] = null;
+		
+		tamañoHeap--;
 		
 		return max;
 	}
