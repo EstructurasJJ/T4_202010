@@ -1,6 +1,7 @@
 package model.data_structures;
 
 import java.util.Iterator;
+import model.logic.Comparendo;
 
 public class MaxColaCP <T extends Comparable <T>>
 {
@@ -32,7 +33,7 @@ public class MaxColaCP <T extends Comparable <T>>
 	public void agregar(T elemento)
 	{
 		Node<T> anteriorUlt= lastNode;
-		Node<T> porAgregar=new Node(elemento);
+		Node<T> porAgregar= new Node(elemento);
 		lastNode = porAgregar;
 		lastNode.cambiarSiguiente(null);
 		
@@ -46,7 +47,8 @@ public class MaxColaCP <T extends Comparable <T>>
 		}
 		
 		size++;
-		swim (size);
+		int aux=size -1;
+		swim (aux);
 		
 	}
 	
@@ -54,14 +56,22 @@ public class MaxColaCP <T extends Comparable <T>>
 	
 	public T eliminarMax()
 	{
-		T rip=(T)firstNode.darInfoDelComparendo();
-		firstNode=firstNode.darSiguiente();
+		T rip=null;
+		if(!emptyList())
+		{
+			rip=(T)firstNode.darInfoDelComparendo();
+			firstNode=firstNode.darSiguiente();
+		}
+		
 		
 		if(emptyList())
 		{
 			lastNode=null;
 		}
-		size--;
+		else
+		{
+			size--;
+		}
 		return rip;
 	}
 	
@@ -73,7 +83,7 @@ public class MaxColaCP <T extends Comparable <T>>
 	
 	public void swim(int t)
 	{
-		while (t>1 && less(t/2,t))
+		while (t>0 && less(t/2,t))
 		{
 			exchange(t,t/2);
 			t=t/2;
@@ -95,15 +105,20 @@ public class MaxColaCP <T extends Comparable <T>>
 			}
 			exchange(t,j);
 			t=j;
-		}
+		} 
 	}
 	
 	public boolean less (int i, int j)
 	{
 		Comparable [] x=darDatosEnArreglo();
-		if (x[i] != null && x[j]!=null)
+		Comparendo pri=(Comparendo)x[i], seg=(Comparendo)x[j];
+		
+		if (pri != null && seg!=null)
 		{
-			return x[i].compareTo(x[j])<0;
+			//return x[i].compareTo(x[j])<0;
+			double aux1=((Comparendo)x[i]).darLatitud();
+			double aux2=((Comparendo)x[j]).darLatitud();
+			return aux1<aux2;
 		}
 		else
 		{
@@ -118,6 +133,27 @@ public class MaxColaCP <T extends Comparable <T>>
 		T aux2=(T)x[j];
 		x[i]=aux2;
 		x[j]=aux;
+		
+		devolverALista(x);
+	}
+	
+	public void devolverALista(Comparable[] x)
+	{	
+		Comparendo aux = (Comparendo)x[0];
+		firstNode=new Node(aux);
+		Node<T> actual= firstNode;
+		
+		for (int i=1;i<x.length;i++)
+		{
+			actual.cambiarSiguiente(new Node((Comparendo)x[i]));
+			actual=actual.darSiguiente();
+			if(i==x.length-1)
+			{
+				lastNode = actual;
+			}
+		}
+		
+		
 	}
 	
 
@@ -135,6 +171,7 @@ public class MaxColaCP <T extends Comparable <T>>
 		{ 
 			return current != null; 
 		}
+		
 		public void remove() 
 		{ }
 
@@ -148,15 +185,19 @@ public class MaxColaCP <T extends Comparable <T>>
 	
 	public Comparable[] darDatosEnArreglo()
 	{
-		Comparable [] result= new Comparable[size+1];
+		Comparable [] result= new Comparable[size];
 
-		Iterator<T> iter= iterator(); 
-		int cont=0; 
-		while(iter.hasNext())
+		Node<T> actual=firstNode;
+		int cuenta=0;
+		
+		while(actual!=null)
 		{
-			result[cont]=iter.next(); 
-			cont++;
+			result[cuenta]=actual.darInfoDelComparendo();
+			
+			actual=actual.darSiguiente();
+			cuenta++;
 		}
+		
 		return result; 
 	}
 	

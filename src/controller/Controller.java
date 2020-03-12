@@ -4,6 +4,7 @@ import java.util.Scanner;
 
 import model.data_structures.MaxColaCP;
 import model.data_structures.MaxHeapCP;
+import model.data_structures.Node;
 import model.logic.Comparendo;
 import model.logic.Modelo;
 import view.View;
@@ -35,17 +36,17 @@ public class Controller {
 			view.printMenu();
 
 			int option = lector.nextInt();
-			
+
 			int nHeap;
 			String lista;
-			
+
 			switch(option)
 			{
 			case 1:
 
 				//Cargar el archivo
 
-				modelo.leerGeoJson(RUTAGEOJASON);
+				modelo.leerGeoJson(JUEGUEMOS);
 
 				view.printMessage("Archivo GeoJSon Cargado");
 				view.printMessage("Numero actual de comparendos " + modelo.darTamanio() + "\n----------");
@@ -71,53 +72,91 @@ public class Controller {
 				view.printMessage("Tipo Servicio: " + modelo.UltimoComparendo().darTipo_Servicio());
 				view.printMessage("Localidad: " + modelo.UltimoComparendo().darLocalidad());
 				view.printMessage("Municipio: " + modelo.UltimoComparendo().darMunicipio() + "\n----------");
-				
-						
-			break;
-			
+
+
+				break;
+
 			case 2:
-				
+
+				System.out.println("Ingrese número de comparendos para la muestra:");
+				int t= Integer.parseInt(lector.next());
+
+				System.out.println("Ingrese los elementos de la lista separados por comas sin espacios: ");
+				String pars = lector.next();
+				String[] spliteados = pars.split(",");
+
+				long comienzo=System.currentTimeMillis();
+				MaxColaCP<Comparendo> norteCola = modelo.norteMaxColaCP(t, spliteados);
+				long tiempoTomado= System.currentTimeMillis()-comienzo;
+				System.out.println("El tiempo del requerimiento fue: " + tiempoTomado + " milisegundos." + "\n----------");
+				if(!norteCola.emptyList())
+				{
+					Node<Comparendo> parada= new Node(norteCola.darPrimerNodo());
+
+					while(norteCola!=null)
+					{
+						Comparendo compa = norteCola.eliminarMax();
+
+						if(compa!=null)
+						{
+
+							view.printMessage("Object Id: " + compa.darObjectid());
+							view.printMessage("Clase Vehiculo: " + compa.darClase_Vehi());
+							view.printMessage("Latitud: " + compa.darLatitud());
+							view.printMessage("Longitud: " + compa.darLongitud() + "\n----------");
+						}
+
+
+					}
+
+				}
+
+
+				break;
+
+			case 3:
+
 				System.out.println("Ingrese número de comparendos para la muestra:");
 				nHeap= Integer.parseInt(lector.next());
-				
+
 				System.out.println("Ingrese los elementos de la lista separados por comas sin espacios: ");
 				lista = lector.next();
 				String[] listica = lista.split(",");
-				
+
 				long tiempoComienzo=System.currentTimeMillis();
 				MaxHeapCP<Comparendo> norteHeap = modelo.norteMaxHeapCP(nHeap+1, listica);
 				long tiempo= System.currentTimeMillis()-tiempoComienzo;
-				
+
 				for(int i = 1; i <= norteHeap.darTamaño(); i++)
 				{
 					Comparendo compa = norteHeap.devolverMax();
-					
+
 					view.printMessage("Object Id: " + compa.darObjectid());
 					view.printMessage("Clase Vehiculo: " + compa.darClase_Vehi());
 					view.printMessage("Latitud: " + compa.darLatitud());
 					view.printMessage("Longitud: " + compa.darLongitud() + "\n----------");					
 				}
-				
-				System.out.println("El tiempo del requerimiento fue: " + tiempo + " milisegundos." + "\n----------");
-				
-			break;
 
-			case 5:
-				
+				System.out.println("El tiempo del requerimiento fue: " + tiempo + " milisegundos." + "\n----------");
+
+				break;
+
+			case 4:
+
 				view.printMessage("--------- \n Hasta pronto !! \n---------"); 
 				lector.close();
 				fin = true;
-				
-			break;	
+
+				break;	
 
 			default: 
-				
+
 				view.printMessage("--------- \n Opción Invalida !! \n---------");
-				
-			break;
-			
+
+				break;
+
 			}
 		}
-		
+
 	}	
 }
